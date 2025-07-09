@@ -4,15 +4,18 @@ A personal web app to track **tasks**, take **notes**, and boost daily focus.
 Built using **React + Vite + TailwindCSS + shadcn/ui**.
 
 ## 🌟 Features (Work in Progress)
+## 🌟 Features (Work in Progress)
 
-- [x] Landing Page and Navigation (Home / Tasks / Notes / Timer)
-- [x] Add new tasks with a clean input field and button
-- [ ] Checkbox to mark task as complete
-- [ ] Delete button to remove a task
-- [ ] Edit task by double-click or button
-- [ ] Notes feature
-- [ ] Timer / Reminder system
-- [ ] LocalStorage or Firebase data saving
+- ✅ Landing Page and Navigation (Home / Tasks / Notes / Timer)
+- ✅ Add new tasks with a clean input field and button
+- ✅ Checkbox to mark task as complete
+- ✅ Delete button to remove a task
+- ✅ Edit task by button
+- ⬜ Assign task for Today / Tomorrow / This Week
+- ⬜ Add optional time to tasks (e.g., 4:00 PM)
+- ⬜ Notes feature
+- ⬜ Timer / Reminder system
+- ⬜ Save data with LocalStorage or Firebase
 
 ## 🛠 Tech Stack
 
@@ -29,14 +32,12 @@ cd productivity-hub
 npm install
 npm run dev
 
-## 📷 Screenshots
-public/ScreenShots/Landing.png
+# ## 📷 Screenshots
+# public/ScreenShots/Landing.png
 
 
+## ✍️ Author
 
-
-
-# Productivity-Hub
-# Productivity-Hub
-# Productivity-Hub
-# Productivity-Hub
+**Chandan Patidar**  
+[GitHub Profile](https://github.com/Chandanpatidar24)  
+=
