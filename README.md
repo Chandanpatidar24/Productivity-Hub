@@ -1,3 +1,5 @@
+
+```md
 # 🧠 Productivity Hub
 
 A personal productivity web app to manage your **tasks**, write **notes**, and stay focused.  
@@ -5,19 +7,20 @@ Built with **React + Vite + TailwindCSS + shadcn/ui** for speed and clean design
 
 ---
 
-## 🌟 Features (In Progress)
+## 🌟 Features (Progress Overview)
 
 - ✅ Landing Page and Navigation (Home / Tasks / Notes / Timer)
 - ✅ Add new tasks with title input
 - ✅ Edit and Delete tasks easily
-- ✅ Mark tasks as complete
+- ✅ Mark tasks as complete or pending
 - ✅ Set **time** and assign **day** (Today / Tomorrow / Weekly)
-- ✅ Refactored file structure: split into `TaskList`, `TaskItem`, `TaskForm`, `utils`, etc.
-- ⬜ Add task **description**
-- ⬜ Modal-based task form UI
-- ⬜ Notes feature (coming soon)
-- ⬜ Pomodoro Timer or Reminder system
-- ⬜ Save and sync data with LocalStorage or Firebase
+- ✅ Add task **description**
+- ✅ View filter: Show only **completed** or **pending** tasks
+- ✅ Responsive layout with TailwindCSS
+- ✅ Refactored file structure (`TaskList`, `TaskItem`, `TaskForm`, etc.)
+- ✅ Modal-based task form UI (for both Add and Edit)
+- ⬜ Pomodoro Timer / Reminder system
+- ⬜ Save and sync tasks using LocalStorage or Firebase
 
 ---
 
@@ -25,50 +28,61 @@ Built with **React + Vite + TailwindCSS + shadcn/ui** for speed and clean design
 
 - ⚛️ React + Vite
 - 🎨 TailwindCSS + shadcn/ui
-- 💾 Planned: Firebase or LocalStorage
-- 🖥️ GitHub CLI + CMD for setup and version control
+- 💾 Planned: Firebase / LocalStorage
+- 🔃 GitHub CLI + CMD for setup and version control
 
 ---
 
 ## 📁 File Structure Overview
+
+```
+
 src/
 ├── components/
-│ ├── TaskForm.jsx // Form for adding tasks (title, description, time, day)
-│ ├── TaskList.jsx // Renders all tasks
-│ ├── TaskItem.jsx // Displays single task with edit/delete/checkbox
-│ └── UI/ // For reusable UI components (future modal, buttons)
+│   ├── TaskForm.jsx        # Modal form for adding/editing tasks
+│   ├── TaskList.jsx        # Renders all tasks (filtered)
+│   ├── TaskItem.jsx        # Individual task with UI (edit/delete/toggle)
+│   └── UI/                 # Future reusable components
 ├── data/
-│ └── constants.js // Days list or static data
+│   └── constants.js        # Static data like days list (optional)
 ├── hooks/
-│ └── useTasks.js // Future: custom logic like localstorage sync
+│   └── useTasks.js         # Custom hook for localStorage sync (coming soon)
 ├── pages/
-│ └── Task.jsx // Main task manager page
-└── App.jsx // Routing and page structure
+│   └── Task.jsx            # Main task management page
+└── App.jsx                 # Main entry + routing
 
+````
 
-## 🚀 How to Run Locally
+---
+
+## 🚀 Run Locally
 
 ```bash
-git clone https://github.com/your-username/productivity-hub.git
+git clone https://github.com/Chandanpatidar24/Productivity-Hub
 cd productivity-hub
 npm install
 npm run dev
+````
 
-🧪 What's Next (Phase 2 Plan)
--🪄 Modal for creating and editing tasks (with all inputs)
+---
 
--📅 Calendar/time picker for deadlines
+## 🧪 What's Next (Phase 2)
 
--🔥 Animated task transitions (Framer Motion)
+* 📅 Add calendar or time picker
+* 🔍 Filter: Today / Tomorrow / This Week
+* 💾 Save tasks to LocalStorage / Firebase
+* ⏲️ Add Pomodoro Timer / Reminder
 
--🔍 Filter by Today / Tomorrow / Week
-
--🌙 Dark mode toggle
-
--📝 Add Notes page
-
+---
 
 ## ✍️ Author
 
-**Chandan Patidar**  
-[GitHub Profile](https://github.com/Chandanpatidar24)  
+**Chandan Patidar**
+[GitHub Profile](https://github.com/Chandanpatidar24)
+
+---
+
+🎯 Stay productive, stay organized with **Productivity Hub**.
+
+```
+

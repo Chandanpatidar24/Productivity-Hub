@@ -1,103 +1,202 @@
-import React, { useState } from 'react';
-import TaskForm from '../components/TaskForm';
-import TaskList from '../components/TaskList';
 
+
+import React, { useState } from "react";
+import TaskForm from "../components/TaskForm";
+import TaskList from "../components/TaskList";
+
+// Main Task Page
 export default function Task() {
-  // Task input
-  const [taskInput, setTaskInput] = useState('');
+  // Input values for task creation
+  const [taskInput, setTaskInput] = useState("");
+  const [taskDesc, setTaskDesc] = useState("");
+  const [taskTime, setTaskTime] = useState("");
+  const [taskDay, setTaskDay] = useState("Today");
 
-  // All task objects
+  // Task list state
   const [taskList, setTaskList] = useState([]);
 
-  // Edit task state
-  const [editId, setEditId] = useState(null);
-  const [editInput, setEditInput] = useState('');
+  // Modal controls
+  const [showModal, setShowModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false); // true when editing
+  const [editId, setEditId] = useState(null);        // task id being edited
 
-  // Time and Day for task
-  const [taskDay, setTaskDay] = useState('Today');
-  const [taskTime, setTaskTime] = useState('');
+  // Filters
+  const [showCompletedOnly, setShowCompletedOnly] = useState(false);
+  const [showPendingOnly, setShowPendingOnly] = useState(false);
 
-  // ➕ Add new task
+  // ✅ Add new task
   const handleAddTask = () => {
-    if (taskInput.trim() === '') return;
+    if (!taskInput.trim()) return;
 
     const newTask = {
       id: Date.now(),
       text: taskInput.trim(),
-      completed: false,
-      day: taskDay,
+      desc: taskDesc.trim(),
       time: taskTime,
+      day: taskDay,
+      completed: false,
     };
 
     setTaskList([...taskList, newTask]);
-    setTaskInput('');
-    setTaskTime('');
+    resetForm();
   };
 
-  // ✅ Toggle task completion
-  const handleToggleComplete = (id) => {
+  // ✏️ Start editing a task
+  const handleEditStart = (task) => {
+    setTaskInput(task.text);
+    setTaskDesc(task.desc);
+    setTaskTime(task.time);
+    setTaskDay(task.day);
+    setEditId(task.id);
+    setIsEditing(true);
+    setShowModal(true);
+  };
+
+  // 💾 Save the edited task
+  const handleEditSave = () => {
     const updatedTasks = taskList.map((task) =>
+      task.id === editId
+        ? {
+          ...task,
+          text: taskInput.trim(),
+          desc: taskDesc.trim(),
+          time: taskTime,
+          day: taskDay,
+        }
+        : task
+    );
+
+    setTaskList(updatedTasks);
+    resetForm();
+  };
+
+  // ❌ Reset form & modal
+  const resetForm = () => {
+    setTaskInput("");
+    setTaskDesc("");
+    setTaskTime("");
+    setTaskDay("Today");
+    setEditId(null);
+    setIsEditing(false);
+    setShowModal(false);
+  };
+
+  // ✅ Toggle completion
+  const handleToggleComplete = (id) => {
+    const updated = taskList.map((task) =>
       task.id === id ? { ...task, completed: !task.completed } : task
     );
-    setTaskList(updatedTasks);
+    setTaskList(updated);
   };
 
   // 🗑 Delete a task
   const handleDeleteTask = (id) => {
-    const filteredTasks = taskList.filter((task) => task.id !== id);
-    setTaskList(filteredTasks);
+    const filtered = taskList.filter((task) => task.id !== id);
+    setTaskList(filtered);
   };
 
-  // ✏️ Start editing
-  const handleEditStart = (task) => {
-    setEditId(task.id);
-    setEditInput(task.text);
-  };
-
-  // 💾 Save edited task
-  const handleEditSave = () => {
-    const updated = taskList.map((task) =>
-      task.id === editId ? { ...task, text: editInput.trim() } : task
-    );
-    setTaskList(updated);
-    setEditId(null);
-    setEditInput('');
-  };
-
-  // ❌ Cancel editing
-  const handleEditCancel = () => {
-    setEditId(null);
-    setEditInput('');
-  };
+  // 📌 Filter task list
+  let filteredTasks = taskList;
+  if (showCompletedOnly) {
+    filteredTasks = taskList.filter((task) => task.completed);
+  } else if (showPendingOnly) {
+    filteredTasks = taskList.filter((task) => !task.completed);
+  }
 
   return (
     <div className="min-h-screen bg-[#FFF9F9] text-[#2c2c2c] p-6">
-      <h2 className="text-4xl text-center py-2 rounded-xl font-bold mb-4 bg-violet-200">
-        🗂️ Your Tasks
+      {/* 🧾 Page title */}
+      <h2 className="text-4xl text-center py-2 rounded-xl font-bold mb-6 bg-purple-100 shadow-sm">
+        📁 Your Tasks
       </h2>
 
-      {/* Input Form */}
-      <TaskForm
-        taskInput={taskInput}
-        setTaskInput={setTaskInput}
-        taskDay={taskDay}
-        setTaskDay={setTaskDay}
-        taskTime={taskTime}
-        setTaskTime={setTaskTime}
-        onAddTask={handleAddTask}
-      />
+      {/* 🔘 Filter buttons */}
+<div className="flex justify-between items-center flex-wrap gap-4 mb-6">
+  {/* Left Side: Add Task & Show All */}
+  <div className="flex gap-3 items-center">
+    {/* Add Task */}
+    <button
+      onClick={() => {
+        resetForm();
+        setShowModal(true);
+      }}
+      className="bg-black text-white px-4 py-2 rounded shadow hover:bg-gray-800"
+    >
+      ➕ Add Task
+    </button>
 
-      {/* Task List */}
+    {/* Show All */}
+    <button
+      onClick={() => {
+        setShowPendingOnly(false);
+        setShowCompletedOnly(false);
+      }}
+      className={`px-4 py-2 rounded shadow ${!showPendingOnly && !showCompletedOnly
+        ? "bg-green-600 text-white"
+        : "bg-green-100 text-green-900"
+        }`}
+    >
+      📋 Show All
+    </button>
+  </div>
+
+  {/* Right Side: Show Done & Show Pending */}
+  <div className="flex gap-3 items-center">
+    {/* Show Done */}
+    <button
+      onClick={() => {
+        setShowCompletedOnly(true);
+        setShowPendingOnly(false);
+      }}
+      className={`px-4 py-2 rounded shadow ${showCompletedOnly
+        ? "bg-black text-white"
+        : "bg-white text-black"
+        }`}
+    >
+      ✅ Show Done
+    </button>
+
+    {/* Show Pending */}
+    <button
+      onClick={() => {
+        setShowPendingOnly(true);
+        setShowCompletedOnly(false);
+      }}
+      className={`px-4 py-2 rounded shadow ${showPendingOnly
+        ? "bg-yellow-500 text-white"
+        : "bg-yellow-100 text-yellow-900"
+        }`}
+    >
+      🕓 Show Pending
+    </button>
+  </div>
+
+      </div>
+
+      {/* 🧾 Task form modal */}
+      {showModal && (
+        <TaskForm
+          taskInput={taskInput}
+          setTaskInput={setTaskInput}
+          taskDesc={taskDesc}
+          setTaskDesc={setTaskDesc}
+          taskTime={taskTime}
+          setTaskTime={setTaskTime}
+          taskDay={taskDay}
+          setTaskDay={setTaskDay}
+          onAddTask={handleAddTask}
+          onEditTask={handleEditSave}
+          isEditing={isEditing}
+          setShowModal={setShowModal}
+        />
+      )}
+
+      {/* 📋 Task list display */}
       <TaskList
-        taskList={taskList}
-        editId={editId}
-        editInput={editInput}
-        setEditInput={setEditInput}
+        taskList={filteredTasks}
+        onEditStart={handleEditStart}
         onToggleComplete={handleToggleComplete}
         onDelete={handleDeleteTask}
-        onEditStart={handleEditStart}
-        onEditSave={handleEditSave}
-        onEditCancel={handleEditCancel}
       />
     </div>
   );
