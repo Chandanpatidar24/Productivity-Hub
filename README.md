@@ -9,18 +9,33 @@ Built with **React + Vite + TailwindCSS + shadcn/ui** for speed and clean design
 
 ## 🌟 Features (Progress Overview)
 
-- ✅ Landing Page and Navigation (Home / Tasks / Notes / Timer)
-- ✅ Add new tasks with title input
-- ✅ Edit and Delete tasks easily
-- ✅ Mark tasks as complete or pending
-- ✅ Set **time** and assign **day** (Today / Tomorrow / Weekly)
-- ✅ Add task **description**
-- ✅ View filter: Show only **completed** or **pending** tasks
-- ✅ Responsive layout with TailwindCSS
-- ✅ Refactored file structure (`TaskList`, `TaskItem`, `TaskForm`, etc.)
-- ✅ Modal-based task form UI (for both Add and Edit)
-- ⬜ Pomodoro Timer / Reminder system
-- ⬜ Save and sync tasks using LocalStorage or Firebase
+### 📋 Tasks Module
+- ✅ Add new tasks (title, description, time, day)
+- ✅ Edit and delete tasks
+- ✅ Mark tasks as done / pending
+- ✅ Filter by Done / Pending
+- ✅ Modal form for Add/Edit
+- ✅ Fully responsive layout
+- ⬜ Save tasks to Firebase
+- ⬜ Dark mode
+- ⬜ More features.....
+
+### 🗒️ Notes Module
+- ✅ Add notes (title + content)
+- ✅ Edit and delete notes
+- ✅ Modal-based note form
+- ✅ Styled note cards (UX/UI)
+- ✅ Responsive layout
+- ⬜ Deadline/Reminder support
+- ⬜ Notes search/filter
+- ⬜ Sync notes to Firebase
+
+### ⏲️ Timer (Upcoming)
+- ⬜ Pomodoro UI & Timer control
+- ⬜ Start/Pause/Reset controls
+- ⬜ Integrate with Tasks (optional)
+
+---
 
 ---
 
@@ -32,26 +47,8 @@ Built with **React + Vite + TailwindCSS + shadcn/ui** for speed and clean design
 - 🔃 GitHub CLI + CMD for setup and version control
 
 ---
-
-## 📁 File Structure Overview
-
-```
-
-src/
-├── components/
-│   ├── TaskForm.jsx        # Modal form for adding/editing tasks
-│   ├── TaskList.jsx        # Renders all tasks (filtered)
-│   ├── TaskItem.jsx        # Individual task with UI (edit/delete/toggle)
-│   └── UI/                 # Future reusable components
-├── data/
-│   └── constants.js        # Static data like days list (optional)
-├── hooks/
-│   └── useTasks.js         # Custom hook for localStorage sync (coming soon)
-├── pages/
-│   └── Task.jsx            # Main task management page
-└── App.jsx                 # Main entry + routing
-
-````
+ 
+ 
 
 ---
 
@@ -64,16 +61,7 @@ npm install
 npm run dev
 ````
 
----
 
-## 🧪 What's Next (Phase 2)
-
-* 📅 Add calendar or time picker
-* 🔍 Filter: Today / Tomorrow / This Week
-* 💾 Save tasks to LocalStorage / Firebase
-* ⏲️ Add Pomodoro Timer / Reminder
-
----
 
 ## ✍️ Author
 
