@@ -31,9 +31,15 @@ Built with **React + Vite + TailwindCSS + shadcn/ui** for speed and clean design
 - ⬜ Sync notes to Firebase
 
 ### ⏲️ Timer (Upcoming)
-- ⬜ Pomodoro UI & Timer control
-- ⬜ Start/Pause/Reset controls
-- ⬜ Integrate with Tasks (optional)
+- ✅ Start / Pause timer functionality
+- ✅ Reset button to reset the current timer
+- ✅ Pomodoro Mode (25 min) Short Break (5 min) & Long Break (10 min)
+- ✅ Countdown timer format (MM:SS)
+- ✅ Clean React Hooks structure (uses useState, useEffect, useRef)
+- ⬜ Sound alert on timer end (Coming up)
+- ⬜ Auto switch between Pomodoro and Breaks (Coming up)
+
+
 
 ---
 

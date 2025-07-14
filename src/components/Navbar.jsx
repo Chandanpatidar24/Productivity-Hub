@@ -11,12 +11,11 @@ export default function Navbar() {
             alt="Logo"
              className="w-8 h-8 object-contain filter invert"
        />
-
-        <span className="text-white font-bold text-lg" >Productivity Hub</span>
+          <Link to="/" className="text-white font-bold text-lg">Productivity Hub</Link>
       </div>
          <div className="flex space-x-4 text-sm text-white">
           <Link to="/task" className="hover:font-bold hover:text-red-400 transition">Task</Link>
-          <Link to="/timer" className="hover:font-bold hover:text-red-400 transition">Timer</Link>
+          <Link to="/timer " className="hover:font-bold hover:text-red-400 transition">Pomodoro </Link>
           <Link to="/notes" className="hover:font-bold hover:text-red-400 transition">Notes</Link>
 
          </div>

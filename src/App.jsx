@@ -3,8 +3,8 @@ import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import Task from "./pages/Task";
-import Timer from "./pages/Timer";
 import Notes from "./pages/Notes";
+import Timer from "./pages/Timer";
 
 export default function App() {
   return (
@@ -14,7 +14,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/task" element={<Task />} />
-        <Route path="/timer" element={<Timer />} />
+        <Route path="/timer" element={<Timer/>}/>
         <Route path="/notes" element={<Notes />} />
       </Routes>
     </div>

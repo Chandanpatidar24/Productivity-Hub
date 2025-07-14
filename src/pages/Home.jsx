@@ -1,5 +1,6 @@
 import React from "react";
 import Navbar from "../components/Navbar";
+import { Link } from "react-router-dom";
 
 export default function Home() {
   return (
@@ -14,10 +15,11 @@ export default function Home() {
           Your space to focus,<br />
           organize, and get things done.
         </h1>
-
-        <button className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-full text-lg">
-          Get Started
+        <Link to="/task">
+        <button  className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-full text-lg">
+         Get Started
         </button>
+        </Link>
       </section>
     </div>
   );
