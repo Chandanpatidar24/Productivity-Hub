@@ -1,136 +1,153 @@
-import { nominalTypeHack } from 'prop-types';
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react';
+import soundFile from '../assets/sound.mp3';
 
-export default function Timer () {
+export default function Timer() {
+  // Timer States
+  const [mode, setMode] = useState("pomodoro"); // Modes: 'pomodoro', 'short', 'long'
+  const [timeLeft, setTimeLeft] = useState(25 * 60); // Time in seconds
+  const [isRunning, setIsRunning] = useState(false); // Tracks if timer is active
+  const [autoCycle, setAutoCycle] = useState(true); // Enables automatic switching between modes
+  const [sessionCount, setSessionCount] = useState(0); // Counts how many pomodoros are completed
 
-  // const Pomodoro =() =>{
-    const[mode , setMode] = useState("pomodoro")
-    const[timeLeft , setTimeLeft] = useState(25*60); //25 minutes in seconds
-    const[isRunning , setIsRunning] = useState(false); //we will this for start and stop 
-    const timerRef = useRef(null);// a container that start with empty
+  const timerRef = useRef(null); // Stores the interval ID
+  const audioRef = useRef(null); // Reference to audio for alert
 
-    //formant for seconds in MM:SS
-    const formatTime = (time) =>{ // setting to time
-      const minutes =Math.floor(time/60); // eg: 87 / 60 = 1.45 so min = 1
-      const seconds = time % 60;//eg:87 % 60 = 27  
-      return`${String(minutes).padStart(2,"0")}:${String(seconds).padStart(2,"0")}`// putting number into string "01:27"
+  // ⏱ Format time from seconds to MM:SS
+  const formatTime = (time) => {
+    const min = Math.floor(time / 60);
+    const sec = time % 60;
+    return `${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+  };
 
-    };
+  // 🧠 Returns time in seconds based on mode
+  const getTimeForMode = (mode) => {
+    switch (mode) {
+      case "pomodoro": return 25 * 60;
+      case "short": return 5 * 60;
+      case "long": return 15 * 60;
+      default: return 25 * 60;
+    }
+  };
 
-    //Start or Pause Timer
-    const toggleTimer =() =>{
-      setIsRunning((prev) => !prev); // prev is previous  state and then !prev flip the state eg: start to pause or vice versa
+  // ▶️ Start or Pause Timer
+  const toggleTimer = () => setIsRunning(prev => !prev);
 
-    };
-      // Swtich Modes
-      const SwitchMode = (newMode) =>{
-        setIsRunning(false);
-        clearInterval(timerRef.current);
-        setMode(newMode);
-        if(newMode === "pomodoro")setTimeLeft(25 * 60);
-        if(newMode === "short") setTimeLeft(5 * 60);
-        if(newMode === "long") setTimeLeft(10 * 60);
-      }
+  // 🔄 Reset Timer
+  const resetTimer = () => {
+    clearInterval(timerRef.current);
+    setIsRunning(false);
+    setTimeLeft(getTimeForMode(mode));
+  };
 
-      //Rest Timer
-      const restTimer= () =>{
-        setIsRunning(false);
-        clearInterval(timerRef.current);
-         
-        if(mode === "pomodoro")setTimeLeft(25 * 60);
-        if(mode === "short") setTimeLeft(5 * 60);
-        if(mode === "long") setTimeLeft(10 * 60);
-      }
+  // 🎯 Switch mode manually
+  const handleModeChange = (newMode) => {
+    clearInterval(timerRef.current);
+    setMode(newMode);
+    setTimeLeft(getTimeForMode(newMode));
+    setIsRunning(false);
+  };
 
-      //timer logic
-      useEffect(() =>{
-        
-        if(isRunning){
-          //if the timer is running ( user Clicked "start")
+  // 🕓 Main Timer Effect
+  useEffect(() => {
+    if (isRunning) {
+      timerRef.current = setInterval(() => {
+        setTimeLeft(prev => {
+          if (prev <= 1) {
+            clearInterval(timerRef.current);
+            setIsRunning(false);
+            audioRef.current?.play();
 
-          // start a new interval that ticks every 1000 milisecond (1 seconds)
-          timerRef.current = setInterval(() =>{
-            //use functional state updated to get  the previous timeLeft value
-            setTimeLeft((prev) => {
-              if(prev <= 1){
-                // if time reacher 0 or below
-                // stop the interval so it doesn't  keep running to negotive
-              clearInterval(timerRef.current);
-
-              //set the timer to 0 exactly (prevents going negative )
-              return 0;
+            // 🔁 Auto-cycle logic (Pomodoro → Short/Long Break → Pomodoro)
+            if (autoCycle) {
+              if (mode === "pomodoro") {
+                const next = sessionCount + 1;
+                setSessionCount(next);
+                if (next % 3 === 0) {
+                  setMode("long");
+                  setTimeLeft(getTimeForMode("long"));
+                } else {
+                  setMode("short");
+                  setTimeLeft(getTimeForMode("short"));
+                }
+                setIsRunning(true);
+              } else {
+                setMode("pomodoro");
+                setTimeLeft(getTimeForMode("pomodoro"));
+                setIsRunning(true);
               }
+            }
 
-              //otherwise , subtract 1 second and contuine the countdown
-              return prev - 1;
-            });
-          }, 1000);// 1 second
-        }else{
-          //if the timer is not running when user clicked pause  
-          
-          //stop the interval if its running start -> puase or true to false 
-          clearInterval(timerRef.current);
+            return 0; // prevent negative values
+          }
 
-        }
-        return() => clearInterval(timerRef.current)
-      },[isRunning]);
+          return prev - 1;
+        });
+      }, 1000); // ⏱ Every second
+    } else {
+      clearInterval(timerRef.current);
+    }
 
+    return () => clearInterval(timerRef.current); // Cleanup
+  }, [isRunning, mode]);
 
-    
-  
-return (
-  <div className="flex flex-col items-center justify-center min-h-screen bg-white text-gray-900 p-4">
-    <h1 className="text-4xl font-bold mb-8">Pomodoro Timer</h1>
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-red-100 to-white text-gray-900 p-4">
+      <h1 className="text-4xl font-bold mb-6">Pomodoro Timer</h1>
 
-    {/* Mode Switch Buttons */}
-    <div className="flex gap-4 mb-6">
-      <button
-        onClick={() => SwitchMode("pomodoro")}
-        className={`px-4 py-2 rounded ${
-          mode === "pomodoro" ? "bg-red-500 text-white" : "bg-gray-200"
-        }`}
-      >
-        Pomodoro
-      </button>
-      <button
-        onClick={() => SwitchMode("short")}
-        className={`px-4 py-2 rounded ${
-          mode === "short" ? "bg-green-500 text-white" : "bg-gray-200"
-        }`}
-      >
-        Short Break
-      </button>
-      <button
-        onClick={() => SwitchMode("long")}
-        className={`px-4 py-2 rounded ${
-          mode === "long" ? "bg-blue-500 text-white" : "bg-gray-200"
-        }`}
-      >
-        Long Break
-      </button>
+      {/* Mode Selection Buttons */}
+      <div className="flex flex-wrap justify-center gap-4 mb-6">
+        <button
+          onClick={() => handleModeChange('pomodoro')}
+          className={`px-6 py-2 rounded-lg text-white ${mode === 'pomodoro' ? 'bg-red-500' : 'bg-gray-400 hover:bg-red-400'}`}
+        >
+          Pomodoro
+        </button>
+        <button
+          onClick={() => handleModeChange('short')}
+          className={`px-6 py-2 rounded-lg text-white ${mode === 'short' ? 'bg-green-500' : 'bg-gray-400 hover:bg-green-400'}`}
+        >
+          Short Break
+        </button>
+        <button
+          onClick={() => handleModeChange('long')}
+          className={`px-6 py-2 rounded-lg text-white ${mode === 'long' ? 'bg-blue-500' : 'bg-gray-400 hover:bg-blue-400'}`}
+        >
+          Long Break
+        </button>
+      </div>
+
+      {/* Time Display */}
+      <h2 className="text-7xl font-bold mb-6 font-mono">{formatTime(timeLeft)}</h2>
+
+      {/* Controls */}
+      <div className="flex gap-6 mb-6">
+        <button
+          onClick={toggleTimer}
+          className="px-8 py-3 bg-yellow-500 hover:bg-yellow-400 text-white text-lg rounded-lg shadow-md"
+        >
+          {isRunning ? "Pause" : "Start"}
+        </button>
+        <button
+          onClick={resetTimer}
+          className="px-8 py-3 bg-gray-600 hover:bg-gray-500 text-white text-lg rounded-lg shadow-md"
+        >
+          Reset
+        </button>
+      </div>
+
+      {/* Auto-cycle Checkbox */}
+      <label className="flex items-center space-x-2 text-lg">
+        <input
+          type="checkbox"
+          checked={autoCycle}
+          onChange={() => setAutoCycle(!autoCycle)}
+          className="w-5 h-5"
+        />
+        <span>Auto Pomodoro Timer (25-5-25-5-25-15)</span>
+      </label>
+
+      {/* Alarm Sound */}
+      <audio ref={audioRef} src={soundFile} preload="auto" />
     </div>
-
-    {/* Timer Display */}
-    <h2 className="text-6xl font-semibold mb-6">{formatTime(timeLeft)}</h2>
-
-    {/* Start/Pause + Reset Buttons */}
-    <div className="flex gap-4">
-      <button
-        onClick={toggleTimer}
-        className="px-6 py-2 bg-gray-800 text-white rounded"
-      >
-        {isRunning ? "Pause" : "Start"}
-      </button>
-      <button
-        onClick={restTimer}
-        className="px-6 py-2 bg-gray-200 text-gray-800 rounded"
-      >
-        Reset
-      </button>
-    </div>
-  </div>
-);
-
+  );
 }
-
-

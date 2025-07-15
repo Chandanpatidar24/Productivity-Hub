@@ -36,9 +36,12 @@ Built with **React + Vite + TailwindCSS + shadcn/ui** for speed and clean design
 - ✅ Pomodoro Mode (25 min) Short Break (5 min) & Long Break (10 min)
 - ✅ Countdown timer format (MM:SS)
 - ✅ Clean React Hooks structure (uses useState, useEffect, useRef)
-- ⬜ Sound alert on timer end (Coming up)
-- ⬜ Auto switch between Pomodoro and Breaks (Coming up)
-
+- ✅ Sound alert on timer end (Coming up)
+- ✅ Auto switch between Pomodoro and Breaks 
+- ⬜ Let the user change durations
+- ⬜ Play background sounds (rain, forest, cafe) while working.
+- ⬜ Show a browser notification when time’s up
+- ⬜ Time's up! Switching in 5 seconds...
 
 
 ---
