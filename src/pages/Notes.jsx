@@ -2,104 +2,158 @@
 import React, { useState } from "react";
 import NoteForm from "../features/notes/NoteForm";
 import NoteCard from "../features/notes/NoteCard";
+import NoteViewModal from "../features/notes/NoteViewModal";
 
 const Notes = () => {
   const [notes, setNotes] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [editId, setEditId] = useState(null);
+  const [viewNote, setViewNote] = useState(null);
 
+  // 📝 Form state
   const [noteInput, setNoteInput] = useState({
     title: "",
     content: "",
+    pinned: false,
   });
 
-  const [editId, setEditId] = useState(null);
-
+  // ✅ Add note
   const handleAdd = () => {
-    const { title, content } = noteInput;
+    const { title, content, pinned } = noteInput;
     if (!title.trim() || !content.trim()) return;
 
     const newNote = {
       id: Date.now(),
       title,
       content,
-      createdAt: new Date().toLocaleDateString(),
+      pinned,
+      createdAt: new Date().toLocaleString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      }),
     };
 
     setNotes([newNote, ...notes]);
-    setNoteInput({ title: "", content: "" });
+    setNoteInput({ title: "", content: "", pinned: false });
     setShowModal(false);
   };
 
+  // ✅ Edit note
   const handleEditStart = (note) => {
     setEditId(note.id);
-    setNoteInput({ title: note.title, content: note.content });
+    setNoteInput({
+      title: note.title,
+      content: note.content,
+      pinned: note.pinned,
+    });
     setShowModal(true);
   };
 
   const handleEditSave = () => {
     setNotes(
       notes.map((note) =>
-        note.id === editId
-          ? { ...note, ...noteInput }
-          : note
+        note.id === editId ? { ...note, ...noteInput } : note
       )
     );
     setEditId(null);
-    setNoteInput({ title: "", content: "" });
+    setNoteInput({ title: "", content: "", pinned: false });
     setShowModal(false);
   };
 
+  // ❌ Delete
   const handleDelete = (id) => {
-    setNotes(notes.filter((n) => n.id !== id));
+    setNotes(notes.filter((note) => note.id !== id));
   };
 
+  // 📌 Toggle Pin
+  const handleTogglePin = (id) => {
+    setNotes((prev) =>
+      prev.map((note) =>
+        note.id === id ? { ...note, pinned: !note.pinned } : note
+      )
+    );
+  };
+
+  // 🔍 Filter notes
+  const pinnedNotes = notes.filter((note) => note.pinned);
+  const unpinnedNotes = notes.filter((note) => !note.pinned);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-orange-100 px-4 py-6">
+    <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-orange-100 px-4 py-6 text-black">
+      <h1 className="text-center text-4xl font-bold mb-6 text-gray-800">
+        📝 My Notes
+      </h1>
 
-  {/* Centered Heading */}
-  <h1 className="text-center text-4xl font-bold text-gray-800 mb-4">
-    📝 My Notes
-  </h1>
+      <div className="max-w-4xl mx-auto mb-6">
+        <button
+          onClick={() => setShowModal(true)}
+          className="bg-yellow-500 text-white px-5 py-2 rounded hover:bg-yellow-600"
+        >
+          ➕ Add Note
+        </button>
+      </div>
 
-  {/* Add Note Button aligned left and slightly lower */}
-  <div className="max-w-4xl mx-auto mb-6">
-    <button
-      onClick={() => setShowModal(true)}
-      className="flex items-center gap-2 bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600"
-    >
-      ➕ Add Note
-    </button>
-  </div>
-
-
-      {/* Modal */}
+      {/* Add/Edit Note Modal */}
       {showModal && (
         <NoteForm
           noteInput={noteInput}
           setNoteInput={setNoteInput}
           onClose={() => {
             setShowModal(false);
-            setNoteInput({ title: "", content: "" });
             setEditId(null);
+            setNoteInput({ title: "", content: "", pinned: false });
           }}
           onSubmit={editId ? handleEditSave : handleAdd}
           isEditing={!!editId}
         />
       )}
 
-      {/* Grid */}
-      <div className="max-w-6xl mx-auto grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-10">
-        {notes.length === 0 ? (
-          <p className="text-center col-span-full text-gray-600">
-            No notes yet.
-          </p>
+      {/* View Note Modal */}
+      {viewNote && (
+        <NoteViewModal
+          note={viewNote}
+          onClose={() => setViewNote(null)}
+          onEditStart={handleEditStart}
+        />
+      )}
+
+      {/* 📌 Pinned Section */}
+      {pinnedNotes.length > 0 && (
+        <>
+          <h2 className="text-xl font-semibold text-gray-700 mb-2">📌 Pinned</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            {pinnedNotes.map((note) => (
+              <NoteCard
+                key={note.id}
+                note={note}
+                onDelete={handleDelete}
+                onEditStart={handleEditStart}
+                onView={setViewNote}
+                onTogglePin={handleTogglePin}
+              />
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* 🗂 Others */}
+      <h2 className="text-xl font-semibold text-gray-700 mb-2">🗂 Others</h2>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {unpinnedNotes.length === 0 ? (
+          <p className="text-gray-500 text-center col-span-full">No notes yet.</p>
         ) : (
-          notes.map((note) => (
+          unpinnedNotes.map((note) => (
             <NoteCard
               key={note.id}
               note={note}
               onDelete={handleDelete}
               onEditStart={handleEditStart}
+              onView={setViewNote}
+              onTogglePin={handleTogglePin}
             />
           ))
         )}

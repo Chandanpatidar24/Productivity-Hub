@@ -15,6 +15,10 @@ export default function Task() {
   // Task list state
   const [taskList, setTaskList] = useState([]);
 
+  //Add Lable/Priority 
+  const[taskLabel, setTaskLabel] = useState("");
+  const[taskPriority, setTaskPriority] = useState("");
+
   // Modal controls
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false); // true when editing
@@ -34,6 +38,8 @@ export default function Task() {
       desc: taskDesc.trim(),
       time: taskTime,
       day: taskDay,
+      label: taskLabel,
+      Priority: taskPriority,
       completed: false,
     };
 
@@ -50,6 +56,8 @@ export default function Task() {
     setEditId(task.id);
     setIsEditing(true);
     setShowModal(true);
+    setTaskLabel(task.label || "");
+    setTaskPriority(task.Priority || "");
   };
 
   // 💾 Save the edited task
@@ -62,6 +70,8 @@ export default function Task() {
           desc: taskDesc.trim(),
           time: taskTime,
           day: taskDay,
+          label: taskLabel,
+          Priority: taskPriority,
         }
         : task
     );
@@ -79,6 +89,8 @@ export default function Task() {
     setEditId(null);
     setIsEditing(false);
     setShowModal(false);
+    setTaskLabel("");
+    setTaskPriority("");
   };
 
   // ✅ Toggle completion
@@ -125,6 +137,7 @@ export default function Task() {
       ➕ Add Task
     </button>
 
+
     {/* Show All */}
     <button
       onClick={() => {
@@ -170,7 +183,7 @@ export default function Task() {
       🕓 Show Pending
     </button>
   </div>
-
+    
       </div>
 
       {/* 🧾 Task form modal */}
@@ -188,6 +201,10 @@ export default function Task() {
           onEditTask={handleEditSave}
           isEditing={isEditing}
           setShowModal={setShowModal}
+          taskLabel={taskLabel}
+          setTaskLabel={setTaskLabel}
+          taskPriority={taskPriority}
+          setTaskPriority={setTaskPriority}
         />
       )}
 

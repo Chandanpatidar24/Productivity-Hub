@@ -14,6 +14,10 @@ export default function TaskForm({
   onEditTask,
   isEditing,
   setShowModal,
+  taskLabel,
+  setTaskLabel,
+  taskPriority,
+  setTaskPriority
 }) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-40 z-50 flex justify-center items-center">
@@ -63,6 +67,32 @@ export default function TaskForm({
           </select>
         </div>
 
+        {/* 🏷 Label & Priority */}
+<div className="flex gap-3 mb-3 flex-col sm:flex-row">
+  <select
+    value={taskLabel}
+    onChange={(e) => setTaskLabel(e.target.value)}
+    className="w-full border p-2 rounded"
+  >
+    <option value="">Select Label</option>
+    <option value="Work">Work</option>
+    <option value="Personal">Personal</option>
+    <option value="Urgent">Urgent</option>
+  </select>
+
+  <select
+    value={taskPriority}
+    onChange={(e) => setTaskPriority(e.target.value)}
+    className="w-full border p-2 rounded"
+  >
+    <option value="">Select Priority</option>
+    <option value="High">High</option>
+    <option value="Medium">Medium</option>
+    <option value="Low">Low</option>
+  </select>
+</div>
+
+
         {/* 📄 Description */}
         <textarea
           rows="3"
@@ -79,6 +109,7 @@ export default function TaskForm({
         >
           {isEditing ? "💾 Save Changes" : "➕ Add Task"}
         </button>
+
       </div>
     </div>
   );
