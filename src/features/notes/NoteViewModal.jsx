@@ -30,6 +30,7 @@ const NoteViewModal = ({ note, onClose, onEditStart }) => {
         <div className="flex-1 overflow-y-auto border rounded bg-gray-50 p-4 text-gray-800 whitespace-pre-wrap">
           {note.content}
         </div>
+        
 
         {/* ✏️ Edit Button */}
         <div className="flex justify-end mt-4">

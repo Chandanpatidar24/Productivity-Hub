@@ -9,6 +9,8 @@ const Notes = () => {
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState(null);
   const [viewNote, setViewNote] = useState(null);
+  const[searchText, setSearchText] = useState("");
+  
 
   // 📝 Form state
   const [noteInput, setNoteInput] = useState({
@@ -42,6 +44,12 @@ const Notes = () => {
     setShowModal(false);
   };
 
+  //Filtere notes based on search text
+   const filteredNotes = notes.filter((note) =>
+    note.title.toLowerCase().includes(searchText.toLowerCase()) ||
+    note.content.toLowerCase().includes(searchText.toLowerCase())
+    );
+   
   // ✅ Edit note
   const handleEditStart = (note) => {
     setEditId(note.id);
@@ -63,6 +71,10 @@ const Notes = () => {
     setNoteInput({ title: "", content: "", pinned: false });
     setShowModal(false);
   };
+   
+  const handleSearchChanges = (e) =>{
+    setSearchText(e.target.value);
+  };
 
   // ❌ Delete
   const handleDelete = (id) => {
@@ -79,8 +91,8 @@ const Notes = () => {
   };
 
   // 🔍 Filter notes
-  const pinnedNotes = notes.filter((note) => note.pinned);
-  const unpinnedNotes = notes.filter((note) => !note.pinned);
+  const pinnedNotes = filteredNotes.filter((note) => note.pinned);
+  const unpinnedNotes = filteredNotes.filter((note) => !note.pinned);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-orange-100 px-4 py-6 text-black">
@@ -95,6 +107,15 @@ const Notes = () => {
         >
           ➕ Add Note
         </button>
+      </div>
+      <div className="max-w-4xl mx-auto mb-4">
+        <input 
+         type="text"
+         placeholder="Search Notes.."
+         value={searchText}
+         onChange={(e) => setSearchText(e.target.value)}
+         className="w-full border border-gray-300 rounded-md p-3 text-lg focus:outline-none focus:ring focus:ring-yellow-300"
+        />
       </div>
 
       {/* Add/Edit Note Modal */}
