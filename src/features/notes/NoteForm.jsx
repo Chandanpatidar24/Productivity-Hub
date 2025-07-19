@@ -1,80 +1,48 @@
-// src/features/notes/NoteForm.jsx
-import React from "react";
+import React, { useState } from 'react'
 
-const NoteForm = ({ noteInput, setNoteInput, onClose, onSubmit, isEditing }) => {
-  // Generate current formatted date & time
-  const currentDateTime = new Date().toLocaleString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  });
+export default function NoteForm({
+  onSave, onCancel,initialData
+}) {
 
+  const[title, setTitle] = useState(initialData?.title||'');
+  const[content, setContent] = useState(initialData?.content||'');
+
+   const handleSubmit= (e) =>{
+    e.preventDefault();
+    const newNote ={
+         id: initialData?.id||Date.now(),
+         title,
+         content,
+         createdAt: initialData?.createdAt ||new Date().toLocaleString(),
+         pinned: initialData?.pinned || false,
+         trashed: initialData?.trashed || false
+        };
+     onSave(newNote);
+     setTitle('');
+     setContent('');
+
+   }
   return (
-    // Fullscreen semi-dark overlay
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      {/* Modal Box */}
-      <div className="bg-white rounded-md shadow-lg w-[90%] max-w-3xl h-[70vh] p-6 relative flex flex-col overflow-hidden">
-        
-        {/* ❌ Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-3 right-4 text-gray-500 hover:text-black text-2xl"
-        >
-          ❌
-        </button>
-
-        {/* Modal Heading */}
-        <h2 className="text-2xl font-bold mb-1 text-center">
-          {isEditing ? "✏️ Edit Note" : "➕ Add Note"}
-        </h2>
-
-        {/* Date & Time display */}
-        <p className="text-sm text-gray-500 text-center mb-4">
-          {currentDateTime}
-        </p>
-
-        {/* Scrollable input section */}
-        <div className="flex-1 overflow-y-auto space-y-4">
-          
-          {/* 📝 Title Input */}
-          <input
-            type="text"
-            placeholder="Note Title"
-            value={noteInput.title}
-            onChange={(e) => setNoteInput({ ...noteInput, title: e.target.value })}
-            className="w-full border border-gray-300 p-3 rounded-md text-lg focus:outline-none focus:ring focus:ring-yellow-300"
-          />
-
-          {/* 📄 Content Input */}
-          <textarea
-            placeholder="Start typing your note..."
-            value={noteInput.content}
-            onChange={(e) => setNoteInput({ ...noteInput, content: e.target.value })}
-            className="w-full border border-gray-300 p-3 rounded-md resize-none min-h-[200px] focus:outline-none focus:ring focus:ring-yellow-300"
-          />
-        </div>
-
-        {/* ✅ Buttons */}
-        <div className="flex justify-end mt-4 gap-3">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onSubmit}
-            className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-          >
-            {isEditing ? "Save" : "Add"}
-          </button>
-        </div>
+    <form onSubmit={handleSubmit} className="mb-6 bg-white p-4 rounded shadow space-y-4">
+      <input
+        type="text"
+        placeholder="Note Title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        className="w-full p-2 border rounded hover:bg-gray-100"
+        required
+      />
+      <textarea
+        placeholder="Write Here..."
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        className="w-full p-2 border rounded h-28 resize-none hover:bg-gray-100"
+        required
+      />
+      <div className="flex gap-2">
+        <button type="submit" className="px-4 py-2 bg-green-500 text-white rounded hover:brightness-110">Save Note</button>
+        <button type="button" onClick={onCancel} className="px-4 py-2 bg-gray-300 rounded hover:bg-red-600">Cancel</button>
       </div>
-    </div>
+    </form>
   );
-};
-
-export default NoteForm;
+}

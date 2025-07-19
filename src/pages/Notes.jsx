@@ -1,186 +1,113 @@
-// src/pages/Notes.jsx
-import React, { useState } from "react";
-import NoteForm from "../features/notes/NoteForm";
-import NoteCard from "../features/notes/NoteCard";
-import NoteViewModal from "../features/notes/NoteViewModal";
 
-const Notes = () => {
+import React, { useState } from 'react';
+import Sidebar from '../features/notes/NotesSidebar';
+import NoteForm from '../features/notes/NoteForm';
+
+export default function Notes() {
+  const [section, setSection] = useState('All Notes');
+  const [showForm, setShowForm] = useState(false);
   const [notes, setNotes] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [editId, setEditId] = useState(null);
-  const [viewNote, setViewNote] = useState(null);
-  const[searchText, setSearchText] = useState("");
-  
+  const[noteEdit , setNoteEdit] = useState(null);
 
-  // 📝 Form state
-  const [noteInput, setNoteInput] = useState({
-    title: "",
-    content: "",
-    pinned: false,
+    
+  const filteredNotes = notes.filter(note =>{
+    if(section === 'All Notes') return !note.trashed && !note.pinned;
+    if(section === 'Pinned') return note.pinned && !note.trashed;
+    if(section === 'Trash')return note.trashed;
+    return ture;
   });
-
-  // ✅ Add note
-  const handleAdd = () => {
-    const { title, content, pinned } = noteInput;
-    if (!title.trim() || !content.trim()) return;
-
-    const newNote = {
-      id: Date.now(),
-      title,
-      content,
-      pinned,
-      createdAt: new Date().toLocaleString("en-IN", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true,
-      }),
+    const handleDeleteNote = (id) =>{
+      setNotes(notes.map(n =>
+        n.id === id ? {...n, trashed:true} : n
+      ));
     };
 
-    setNotes([newNote, ...notes]);
-    setNoteInput({ title: "", content: "", pinned: false });
-    setShowModal(false);
-  };
+    const handleSaveNote = (note) => {
+      if(noteEdit){
+        setNotes(notes.map(n => (n.id === note.id ? note : n))); 
+        setNoteEdit(null);
+      }else{
+        setNotes([note, ...notes]);
+      }
 
-  //Filtere notes based on search text
-   const filteredNotes = notes.filter((note) =>
-    note.title.toLowerCase().includes(searchText.toLowerCase()) ||
-    note.content.toLowerCase().includes(searchText.toLowerCase())
-    );
-   
-  // ✅ Edit note
-  const handleEditStart = (note) => {
-    setEditId(note.id);
-    setNoteInput({
-      title: note.title,
-      content: note.content,
-      pinned: note.pinned,
-    });
-    setShowModal(true);
-  };
+      setShowForm(false);
+    };
 
-  const handleEditSave = () => {
-    setNotes(
-      notes.map((note) =>
-        note.id === editId ? { ...note, ...noteInput } : note
-      )
-    );
-    setEditId(null);
-    setNoteInput({ title: "", content: "", pinned: false });
-    setShowModal(false);
-  };
-   
-  const handleSearchChanges = (e) =>{
-    setSearchText(e.target.value);
-  };
-
-  // ❌ Delete
-  const handleDelete = (id) => {
-    setNotes(notes.filter((note) => note.id !== id));
-  };
-
-  // 📌 Toggle Pin
-  const handleTogglePin = (id) => {
-    setNotes((prev) =>
-      prev.map((note) =>
-        note.id === id ? { ...note, pinned: !note.pinned } : note
-      )
-    );
-  };
-
-  // 🔍 Filter notes
-  const pinnedNotes = filteredNotes.filter((note) => note.pinned);
-  const unpinnedNotes = filteredNotes.filter((note) => !note.pinned);
+  
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-orange-100 px-4 py-6 text-black">
-      <h1 className="text-center text-4xl font-bold mb-6 text-gray-800">
-        📝 My Notes
-      </h1>
+    <div className="flex ">
+      <Sidebar onSelect={setSection} />
 
-      <div className="max-w-4xl mx-auto mb-6">
-        <button
-          onClick={() => setShowModal(true)}
-          className="bg-yellow-500 text-white px-5 py-2 rounded hover:bg-yellow-600"
-        >
-          ➕ Add Note
-        </button>
-      </div>
-      <div className="max-w-4xl mx-auto mb-4">
-        <input 
-         type="text"
-         placeholder="Search Notes.."
-         value={searchText}
-         onChange={(e) => setSearchText(e.target.value)}
-         className="w-full border border-gray-300 rounded-md p-3 text-lg focus:outline-none focus:ring focus:ring-yellow-300"
-        />
-      </div>
+      <main className="flex-1 p-6">
+        <h1 className="text-2xl font-bold mb-4">{section}</h1>
 
-      {/* Add/Edit Note Modal */}
-      {showModal && (
-        <NoteForm
-          noteInput={noteInput}
-          setNoteInput={setNoteInput}
-          onClose={() => {
-            setShowModal(false);
-            setEditId(null);
-            setNoteInput({ title: "", content: "", pinned: false });
-          }}
-          onSubmit={editId ? handleEditSave : handleAdd}
-          isEditing={!!editId}
-        />
-      )}
+        <div className="mb-4 flex justify-start">
+          <button
+            onClick={() => setShowForm(true)}
+            className="px-4 py-2 bg-red-600 text-white rounded"
+          >
+             Add Note
+          </button>
+        </div>
 
-      {/* View Note Modal */}
-      {viewNote && (
-        <NoteViewModal
-          note={viewNote}
-          onClose={() => setViewNote(null)}
-          onEditStart={handleEditStart}
-        />
-      )}
-
-      {/* 📌 Pinned Section */}
-      {pinnedNotes.length > 0 && (
-        <>
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">📌 Pinned</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-            {pinnedNotes.map((note) => (
-              <NoteCard
-                key={note.id}
-                note={note}
-                onDelete={handleDelete}
-                onEditStart={handleEditStart}
-                onView={setViewNote}
-                onTogglePin={handleTogglePin}
-              />
-            ))}
-          </div>
-        </>
-      )}
-
-      {/* 🗂 Others */}
-      <h2 className="text-xl font-semibold text-gray-700 mb-2">🗂 Others</h2>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {unpinnedNotes.length === 0 ? (
-          <p className="text-gray-500 text-center col-span-full">No notes yet.</p>
-        ) : (
-          unpinnedNotes.map((note) => (
-            <NoteCard
-              key={note.id}
-              note={note}
-              onDelete={handleDelete}
-              onEditStart={handleEditStart}
-              onView={setViewNote}
-              onTogglePin={handleTogglePin}
-            />
-          ))
+        {showForm && (
+          <NoteForm
+            onSave={handleSaveNote}
+            onCancel={() =>{
+               setShowForm(false);
+               setNoteEdit(null)
+              }}
+              initialData={noteEdit}
+          />
         )}
-      </div>
+
+        <div className="space-y-4">
+          {filteredNotes.map((note) => (
+            <div 
+            key={note.id}
+            onClick={() => setNoteEdit(note)}
+             className=" cursor-pointer group-bg-white hover-gray-300 transition-all duration-150  border rounded-xl p-4 shadow-sm hover:shadow-md">
+              <h2 className="text-lg font-bold text-gray-800">{note.title}</h2>
+              <p className="text-gray-700 mt-1">{note.content}</p>
+              <p className="text-xs text-gray-500 mt-2">{note.createdAt}</p>
+
+              {/*Delete Button*/}
+              <div className='mt-2'>
+                <button
+                 onClick={() => handleDeleteNote(note.id)}
+                 className='text-red-500 hover:underline text-sm'
+                >
+                  Delete
+                </button>
+
+                {/*Edit Button */}
+                <button
+                onClick={() =>{
+                  setNoteEdit(note);
+                  setShowForm(true);
+                }}
+                className='text-blue-600 hover:underline text-sm mr-4'
+                >
+                  Edit
+                </button>
+
+                {/*Pin Button */}
+                <button
+                 onClick={() =>
+                  setNotes(notes.map(n =>
+                    n.id === note.id ? {...n, pinned : !n.pinned} :n
+                  ))
+                 }
+                 className='text-yellow-500 hover:underline text-sm mr-4'
+                >
+                  {note.pinned ? 'unpin' :'Pin'}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
     </div>
   );
-};
-
-export default Notes;
+}

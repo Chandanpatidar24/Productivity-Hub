@@ -1,8 +1,8 @@
 
 
 import React, { useState } from "react";
-import TaskForm from "../components/TaskForm";
-import TaskList from "../components/TaskList";
+import TaskForm from "../features/tasks/TaskForm";
+import TaskList from "../features/tasks/TaskList";
 
 // Main Task Page
 export default function Task() {
@@ -183,7 +183,7 @@ export default function Task() {
       🕓 Show Pending
     </button>
   </div>
-    
+ 
       </div>
 
       {/* 🧾 Task form modal */}
